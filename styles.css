@@ -1,0 +1,284 @@
+/* بهینه‌سازی‌های ریسپانسیو پیشرفته */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .hero h2 {
+        font-size: 1.6rem;
+        line-height: 1.3;
+    }
+    
+    .hero p {
+        font-size: 0.95rem;
+        padding: 0 10px;
+    }
+    
+    .card {
+        padding: 20px 15px;
+        margin-bottom: 15px;
+        border-radius: 12px;
+    }
+    
+    .btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .user-info {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .user-info span {
+        font-size: 0.9rem;
+    }
+    
+    .logo h1 {
+        font-size: 1.1rem;
+    }
+    
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .status-card {
+        padding: 20px 15px;
+    }
+    
+    .server-info div {
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+    
+    .chat-container {
+        height: 400px;
+    }
+    
+    .message {
+        max-width: 90%;
+        padding: 12px 15px;
+    }
+    
+    .chat-input {
+        padding: 15px;
+    }
+    
+    .login-container {
+        margin: 20px 15px;
+        padding: 25px 20px;
+    }
+    
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .gallery-item {
+        height: 120px;
+    }
+    
+    .users-list {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .user-card {
+        padding: 15px;
+    }
+    
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+    
+    /* بهبود navigation برای موبایل */
+    nav {
+        position: relative;
+    }
+    
+    nav ul {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--secondary);
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 5px;
+        margin: 0;
+        border-top: 1px solid var(--glass-border);
+        z-index: 1000;
+    }
+    
+    nav a {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        border-radius: 8px;
+        text-align: center;
+        flex: 1;
+        margin: 0 2px;
+    }
+    
+    /* بهبود tabs برای موبایل */
+    .tabs {
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 3px;
+    }
+    
+    .tab {
+        flex: 1 0 45%;
+        margin: 2px;
+        padding: 12px 8px;
+        font-size: 0.85rem;
+    }
+    
+    .tab-highlight {
+        display: none;
+    }
+}
+
+@media (max-width: 360px) {
+    .hero h2 {
+        font-size: 1.4rem;
+    }
+    
+    .hero p {
+        font-size: 0.9rem;
+    }
+    
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+    
+    .logo h1 {
+        font-size: 1rem;
+    }
+    
+    .status-grid {
+        gap: 15px;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        max-width: 95%;
+    }
+    
+    .status-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .users-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* بهبود اسکرول برای موبایل */
+@media (max-width: 768px) {
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .chat-messages {
+        padding: 15px;
+    }
+    
+    /* پیشگیری از زوم در inputها در iOS */
+    input, select, textarea {
+        font-size: 16px;
+    }
+}
+
+/* بهبود نمایش در حالت landscape موبایل */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        padding: 30px 0;
+    }
+    
+    .login-container {
+        margin: 20px auto;
+        padding: 25px;
+    }
+    
+    .chat-container {
+        height: 300px;
+    }
+}
+
+/* بهینه‌سازی برای تبلت‌های کوچک */
+@media (min-width: 481px) and (max-width: 768px) {
+    .container {
+        max-width: 95%;
+    }
+    
+    .hero h2 {
+        font-size: 2rem;
+    }
+    
+    .status-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .users-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* بهبود navigation bar در موبایل */
+@media (max-width: 768px) {
+    header {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .logo {
+        flex: 1;
+    }
+    
+    .user-info {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+    }
+}
+
+/* پشتیبانی از حالت تاریک خودکار */
+@media (prefers-color-scheme: dark) {
+    /* اطمینان از سازگاری با حالت تاریک سیستم */
+    body {
+        background: linear-gradient(135deg, #0A3D62, #1E3A5F, #0A3D62);
+    }
+}
+
+/* بهبود عملکرد لمسی */
+@media (max-width: 768px) {
+    .btn, .tab, nav a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .toggle-password {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
