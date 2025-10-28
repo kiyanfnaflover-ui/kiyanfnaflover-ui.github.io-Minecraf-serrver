@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CosJol Server - Premium Minecraft Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+            --diamond-size: 120px;
+            --primary-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --accent-gradient: linear-gradient(45deg, #00dbde, #fc00ff, #ff0080);
+            --diamond-glow: drop-shadow(0 0 15px rgba(0, 219, 222, 0.9));
+            --neon-glow: 0 0 10px rgba(0, 219, 222, 0.7), 0 0 20px rgba(0, 219, 222, 0.5), 0 0 30px rgba(0, 219, 222, 0.3);
+        }
+
+        body {
+            background: var(--primary-gradient);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            cursor: none;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        /* Enhanced Diamond Cursor */
+        .diamond-cursor {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/39ac6b8e-c8c9-4d20-a781-2b36215bf34a/darz0p6-c135df35-834a-4c05-9629-4da136081691.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi8zOWFjNmI4ZS1jOGM5LTRkMjAtYTc4MS0yYjM2MjE1YmYzNGEvZGFyejBwNi1jMTM1ZGYzNS04MzRhLTRjMDUtOTYyOS00ZGExMzYwODE2OTEuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.HaGCk-B6VSmc7r7i5NStmE1Fo8psgpVh-clNqH5ehno');
+            background-size: contain;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 10000;
+            filter: var(--diamond-glow);
+            transition: transform 0.1s, filter 0.3s;
+            mix-blend-mode: screen;
+        }
+
+        .diamond-cursor.hover {
+            transform: scale(1.5);
+            filter: drop-shadow(0 0 20px rgba(252, 0, 255, 1)) brightness(1.5);
+        }
+
+        /* Enhanced Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease;
+        }
+
+        #loading-progress {
+            width: 500px;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            margin-top: 40px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 219, 222, 0.4), inset 0 1px 5px rgba(0, 0, 0, 0.3);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-gradient);
+            border-radius: 20px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 25px rgba(252, 0, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            animation: progressShine 1.5s infinite;
+        }
+
+        .loading-text {
+            font-size: 48px;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: var(--neon-glow);
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            animation: textGlow 2s ease-in-out infinite alternate, textPulse 3s infinite;
+            letter-spacing: 3px;
+            position: relative;
+        }
+
+        .loading-text::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-gradient);
+            border-radius: 3px;
+            animation: loadingLine 2s infinite;
+        }
+
+        #diamond-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .diamond {
+            position: absolute;
+            width: var(--diamond-size);
+            height: var(--diamond-size);
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/39ac6b8e-c8c9-4d20-a781-2b36215bf34a/darz0p6-c135df35-834a-4c05-9629-4da136081691.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi8zOWFjNmI4ZS1jOGM5LTRkMjAtYTc4MS0yYjM2MjE1YmYzNGEvZGFyejBwNi1jMTM1ZGYzNS04MzRhLTRjMDUtOTYyOS00ZGExMzYwODE2OTEuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.HaGCk-B6VSmc7r7i5NStmE1Fo8psgpVh-clNqH5ehno');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: transform 0.1s;
+            filter: var(--diamond-glow);
+            animation: diamondPulse 3s infinite alternate;
+            z-index: 1;
+            mix-blend-mode: screen;
+        }
+
+        /* Enhanced Main Content */
+        #main-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+            min-height: 100vh;
+            padding: 30px;
+            perspective: 1000px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0;
+            animation: fadeInDown 1.5s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Login Button in Top Left */
+        .login-btn-top {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--accent-gradient);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(252, 0, 255, 0.4);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .login-btn-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(252, 0, 255, 0.6);
+        }
+
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            border-radius: 25px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), var(--neon-glow);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .login-modal.active .login-container {
+            transform: translateY(0);
+        }
+
+        .login-container h2 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .close-login {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-login:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: rgba(0, 219, 222, 0.8);
+            box-shadow: 0 0 15px rgba(0, 219, 222, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .submit-login {
+            width: 100%;
+            background: var(--accent-gradient);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 10px rgba(252, 0, 255, 0.4);
+            margin-bottom: 15px;
+        }
+
+        .submit-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4), 0 0 15px rgba(252, 0, 255, 0.6);
+        }
+
+        .user-panel {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #welcome-message {
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 30px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .logo {
+            width: 180px;
+            height: 180px;
+            border-radius: 35px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), var(--neon-glow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            position: relative;
+            animation: logoFloat 6s ease-in-out infinite;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: var(--accent-gradient);
+            z-index: -1;
+            border-radius: 38px;
+            animation: logoBorder 3s linear infinite;
+            filter: blur(5px);
+            opacity: 0.7;
+        }
+
+        .logo img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            border-radius: 30px;
+            animation: spin 15s linear infinite;
+            filter: brightness(1.2) contrast(1.1);
+        }
+
+        .title-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        h1 {
+            font-size: 6rem;
+            margin-bottom: 10px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: var(--neon-glow);
+            font-weight: 900;
+            letter-spacing: 3px;
+            position: relative;
+            animation: titleGlow 3s ease-in-out infinite alternate, titleFloat 5s ease-in-out infinite;
+            transform-style: preserve-3d;
+            line-height: 1;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-gradient);
+            border-radius: 3px;
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: titleUnderline 4s infinite;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            animation: subtitleFloat 4s ease-in-out infinite, subtitleGlow 3s infinite alternate;
+            transform-style: preserve-3d;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .server-info {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 30px;
+            padding: 60px;
+            max-width: 900px;
+            margin: 0 auto 50px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), var(--neon-glow);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            animation: fadeInUp 1s ease 0.5s both, cardGlow 5s infinite alternate;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .server-info:hover {
+            animation: serverWobble 0.5s ease, serverBounce 0.8s ease;
+        }
+
+        .server-info.shake {
+            animation: serverShake 0.5s ease;
+        }
+
+        .server-info.bounce {
+            animation: serverBounce 0.8s ease;
+        }
+
+        .server-info.wobble {
+            animation: serverWobble 0.5s ease;
+        }
+
+        .server-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: var(--accent-gradient);
+            animation: borderFlow 3s linear infinite;
+            box-shadow: 0 0 15px rgba(252, 0, 255, 0.7);
+        }
+
+        .server-info h2 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            animation: textShimmer 4s infinite, textPulse 3s infinite;
+            transform-style: preserve-3d;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .server-info p {
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-size: 1.3rem;
+            opacity: 0.9;
+            animation: textFadeIn 1s ease 1s both;
+            transform-style: preserve-3d;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+
+        .server-address {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 25px;
+            padding: 30px 35px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+            animation: addressPulse 4s infinite, addressFloat 6s ease-in-out infinite;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 219, 222, 0.3);
+        }
+
+        .server-address::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 0.5s;
+        }
+
+        .server-address:hover::before {
+            left: 100%;
+        }
+
+        .server-address:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(0, 219, 222, 0.5);
+        }
+
+        .server-text {
+            font-family: 'Courier New', monospace;
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            font-weight: 700;
+            position: relative;
+            transform-style: preserve-3d;
+            text-shadow: 0 0 10px rgba(0, 219, 222, 0.5);
+        }
+
+        .copy-btn {
+            background: var(--accent-gradient);
+            border: none;
+            color: white;
+            padding: 18px 35px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 800;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 15px rgba(252, 0, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .copy-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .copy-btn:hover::before {
+            left: 100%;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 0 30px rgba(252, 0, 255, 0.9), 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 25px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 219, 222, 0.5);
+            transform: translateX(150%);
+            transition: transform 0.5s ease;
+            z-index: 1001;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px rgba(0, 219, 222, 0.5);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+            font-size: 1.2rem;
+            animation: fadeIn 1s ease 1s both;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Enhanced Diamond Border Elements */
+        .diamond-border {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/39ac6b8e-c8c9-4d20-a781-2b36215bf34a/darz0p6-c135df35-834a-4c05-9629-4da136081691.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi8zOWFjNmI4ZS1jOGM5LTRkMjAtYTc4MS0yYjM2MjE1YmYzNGEvZGFyejBwNi1jMTM1ZGYzNS04MzRhLTRjMDUtOTYyOS00ZGExMzYwODE2OTEuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.HaGCk-B6VSmc7r7i5NStmE1Fo8psgpVh-clNqH5ehno');
+            background-size: contain;
+            background-repeat: no-repeat;
+            filter: var(--diamond-glow);
+            animation: diamondSpin 8s linear infinite, diamondFloat 10s ease-in-out infinite;
+            z-index: -1;
+            mix-blend-mode: screen;
+        }
+
+        .db-1 { top: 5%; left: 5%; }
+        .db-2 { top: 5%; right: 5%; }
+        .db-3 { bottom: 5%; left: 5%; }
+        .db-4 { bottom: 5%; right: 5%; }
+        .db-5 { top: 50%; left: 2%; transform: translateY(-50%); }
+        .db-6 { top: 50%; right: 2%; transform: translateY(-50%); }
+
+        /* New Enhanced Animations */
+        @keyframes titleFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes titleUnderline {
+            0%, 100% {
+                transform: scaleX(0);
+            }
+            50% {
+                transform: scaleX(1);
+            }
+        }
+
+        @keyframes subtitleGlow {
+            0% {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(0, 219, 222, 0.5);
+            }
+        }
+
+        @keyframes addressFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes textPulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes loadingLine {
+            0% {
+                transform: scaleX(0);
+                transform-origin: left;
+            }
+            50% {
+                transform: scaleX(1);
+                transform-origin: left;
+            }
+            51% {
+                transform-origin: right;
+            }
+            100% {
+                transform: scaleX(0);
+                transform-origin: right;
+            }
+        }
+
+        @keyframes diamondFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        /* New Server Hover Animations */
+        @keyframes serverShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        @keyframes serverWobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(2deg); }
+            50% { transform: rotate(-2deg); }
+            75% { transform: rotate(1deg); }
+        }
+
+        @keyframes serverBounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
+        }
+
+        /* Enhanced Physics-based animations */
+        @keyframes gradientShift {
+            0% {
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            }
+            50% {
+                background: 
+                    radial-gradient(circle at 80% 80%, rgba(120, 119, 198, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 20% 20%, rgba(255, 119, 198, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 60% 60%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            }
+            100% {
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            }
+        }
+
+        @keyframes progressShine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes textGlow {
+            0% {
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+            }
+            100% {
+                text-shadow: 0 0 25px rgba(255, 255, 255, 0.9), 0 0 40px rgba(0, 219, 222, 0.7);
+            }
+        }
+
+        @keyframes diamondPulse {
+            0% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 15px rgba(0, 219, 222, 0.9));
+            }
+            100% {
+                transform: scale(1.15);
+                filter: drop-shadow(0 0 30px rgba(0, 219, 222, 1));
+            }
+        }
+
+        @keyframes logoFloat {
+            0% {
+                transform: translateY(0px) rotateY(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotateY(15deg);
+            }
+            100% {
+                transform: translateY(0px) rotateY(0deg);
+            }
+        }
+
+        @keyframes logoBorder {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 200% 0%;
+            }
+        }
+
+        @keyframes titleGlow {
+            0% {
+                text-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+            }
+            100% {
+                text-shadow: 0 0 35px rgba(255, 255, 255, 0.7), 0 0 50px rgba(252, 0, 255, 0.5);
+            }
+        }
+
+        @keyframes subtitleFloat {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes cardGlow {
+            0% {
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 219, 222, 0.3);
+            }
+            100% {
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 219, 222, 0.6);
+            }
+        }
+
+        @keyframes borderFlow {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 200% 0%;
+            }
+        }
+
+        @keyframes textShimmer {
+            0% {
+                background-position: -200% 0%;
+            }
+            100% {
+                background-position: 200% 0%;
+            }
+        }
+
+        @keyframes textFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            100% {
+                opacity: 0.9;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes addressPulse {
+            0% {
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 219, 222, 0.3);
+            }
+            50% {
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(0, 219, 222, 0.6);
+            }
+            100% {
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 219, 222, 0.3);
+            }
+        }
+
+        @keyframes diamondSpin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Original Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 4rem;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .server-address {
+                flex-direction: column;
+                gap: 25px;
+            }
+            
+            .server-text {
+                font-size: 1.4rem;
+                text-align: center;
+            }
+            
+            .diamond {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .logo {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .diamond-border {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .loading-text {
+                font-size: 36px;
+            }
+            
+            #loading-progress {
+                width: 350px;
+            }
+            
+            .login-btn-top {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .login-container {
+                padding: 30px;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Diamond Cursor -->
+    <div class="diamond-cursor"></div>
+
+    <!-- Diamond Border Elements -->
+    <div class="diamond-border db-1"></div>
+    <div class="diamond-border db-2"></div>
+    <div class="diamond-border db-3"></div>
+    <div class="diamond-border db-4"></div>
+    <div class="diamond-border db-5"></div>
+    <div class="diamond-border db-6"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-text">COSJOL SERVER</div>
+        <div id="diamond-container"></div>
+        <div id="loading-progress">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <header>
+            <!-- Login Button in Top Left -->
+            <button class="login-btn-top" id="login-btn-top">Login</button>
+            
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="https://minecraft.wiki/images/Enchanted_Mace.gif?7c432" alt="CosJol Server Logo">
+                </div>
+                <div class="title-container">
+                    <h1>CosJol Server</h1>
+                    <div class="subtitle">Premium Minecraft Experience</div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="server-info">
+                <h2>Server Address</h2>
+                <p>Copy the address below and paste it in your Minecraft client to join our exclusive server:</p>
+                
+                <div class="server-address" id="server-address">
+                    <span class="server-text">cosjolserver.aternos.me:11940</span>
+                    <button class="copy-btn" id="copy-button">Copy Address</button>
+                </div>
+                
+                <p>Experience the most premium Minecraft gameplay with custom features, events, and an amazing community.</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>CosJol Server &copy; 2025 | Premium Minecraft Hosting</p>
+        </footer>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="login-modal">
+        <div class="login-container">
+            <button class="close-login" id="close-login">&times;</button>
+            <h2>Member Login</h2>
+            <form id="login-form">
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="submit-login">Login</button>
+            </form>
+            <div class="user-panel" id="user-panel" style="display: none;">
+                <div class="user-info">
+                    <span id="welcome-message"></span>
+                    <button class="logout-btn" id="logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        Server address copied to clipboard!
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enhanced custom diamond cursor
+            const cursor = document.querySelector('.diamond-cursor');
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX - 20 + 'px';
+                cursor.style.top = e.clientY - 20 + 'px';
+            });
+            
+            // Add hover effect to interactive elements
+            const interactiveElements = document.querySelectorAll('.server-info, .server-address, .copy-btn, .logo, h1');
+            
+            interactiveElements.forEach(element => {
+                element.addEventListener('mouseenter', () => {
+                    cursor.classList.add('hover');
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('hover');
+                });
+                
+                element.addEventListener('mousemove', (e) => {
+                    const rect = element.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const angleX = (y - centerY) / 15;
+                    const angleY = (centerX - x) / 15;
+                    
+                    element.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg)`;
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    element.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+                });
+            });
+            
+            // Enhanced diamond physics in loading screen
+            const diamondContainer = document.getElementById('diamond-container');
+            const diamonds = [];
+            let diamondId = 0;
+            
+            let lastDiamondTime = 0;
+            document.addEventListener('mousemove', (e) => {
+                const now = Date.now();
+                if (now - lastDiamondTime > 100) {
+                    createDiamondAtMouse(e.clientX, e.clientY);
+                    lastDiamondTime = now;
+                }
+            });
+            
+            function createDiamondAtMouse(x, y) {
+                diamondId++;
+                
+                const diamond = document.createElement('div');
+                diamond.className = 'diamond';
+                diamond.id = `diamond-${diamondId}`;
+                diamond.style.left = (x - 60) + 'px';
+                diamond.style.top = (y - 60) + 'px';
+                
+                const rotation = Math.random() * 360;
+                const scale = 0.8 + Math.random() * 0.4;
+                diamond.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+                
+                diamondContainer.appendChild(diamond);
+                
+                const physics = {
+                    x: x - 60,
+                    y: y - 60,
+                    velocityY: 0,
+                    rotation: rotation,
+                    rotationSpeed: (Math.random() - 0.5) * 12,
+                    scale: scale,
+                    isFalling: true,
+                    opacity: 1
+                };
+                
+                diamonds.push({
+                    element: diamond,
+                    physics: physics
+                });
+                
+                if (diamonds.length > 50) {
+                    const oldDiamond = diamonds.shift();
+                    diamondContainer.removeChild(oldDiamond.element);
+                }
+            }
+            
+            function updatePhysics() {
+                for (let i = diamonds.length - 1; i >= 0; i--) {
+                    const diamond = diamonds[i];
+                    const physics = diamond.physics;
+                    
+                    if (physics.isFalling) {
+                        physics.velocityY += 0.5;
+                        physics.y += physics.velocityY;
+                        physics.rotation += physics.rotationSpeed;
+                        
+                        if (physics.y > window.innerHeight - 120) {
+                            physics.y = window.innerHeight - 120;
+                            physics.velocityY = -physics.velocityY * 0.6;
+                            physics.rotationSpeed *= 0.8;
+                            
+                            if (Math.abs(physics.velocityY) < 1.5) {
+                                physics.isFalling = false;
+                                
+                                setTimeout(() => {
+                                    physics.opacity -= 0.03;
+                                    diamond.element.style.opacity = physics.opacity;
+                                    
+                                    if (physics.opacity <= 0) {
+                                        diamonds.splice(i, 1);
+                                        diamondContainer.removeChild(diamond.element);
+                                    }
+                                }, 1500);
+                            }
+                        }
+                        
+                        diamond.element.style.top = physics.y + 'px';
+                        diamond.element.style.transform = `rotate(${physics.rotation}deg) scale(${physics.scale})`;
+                    }
+                }
+                
+                requestAnimationFrame(updatePhysics);
+            }
+            
+            updatePhysics();
+            
+            // Enhanced loading progress
+            const progressBar = document.getElementById('progress-bar');
+            const loadingScreen = document.getElementById('loading-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            let progress = 0;
+            const totalTime = 20000;
+            const intervalTime = 150;
+            const steps = totalTime / intervalTime;
+            const progressIncrement = 100 / steps;
+            
+            const loadingInterval = setInterval(() => {
+                progress += progressIncrement;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(loadingInterval);
+                    
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            mainContent.style.display = 'block';
+                            
+                            setTimeout(() => {
+                                mainContent.style.opacity = '1';
+                            }, 100);
+                        }, 1000);
+                    }, 500);
+                }
+            }, intervalTime);
+            
+            // Copy server address functionality
+            const serverAddress = document.getElementById('server-address');
+            const copyButton = document.getElementById('copy-button');
+            const notification = document.getElementById('notification');
+            
+            function copyToClipboard() {
+                const text = 'cosjolserver.aternos.me:11940';
+                
+                navigator.clipboard.writeText(text).then(() => {
+                    notification.classList.add('show');
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                }).catch(err => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    notification.classList.add('show');
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                });
+            }
+            
+            serverAddress.addEventListener('click', copyToClipboard);
+            copyButton.addEventListener('click', copyToClipboard);
+            
+            // Login functionality
+            const loginBtnTop = document.getElementById('login-btn-top');
+            const loginModal = document.getElementById('login-modal');
+            const closeLogin = document.getElementById('close-login');
+            const loginForm = document.getElementById('login-form');
+            const userPanel = document.getElementById('user-panel');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const logoutBtn = document.getElementById('logout-btn');
+            
+            // Check if user is already logged in
+            function checkLoginStatus() {
+                const loggedInUser = localStorage.getItem('loggedInUser');
+                if (loggedInUser) {
+                    loginBtnTop.textContent = loggedInUser;
+                    showUserPanel(loggedInUser);
+                }
+            }
+            
+            function showUserPanel(username) {
+                loginForm.style.display = 'none';
+                userPanel.style.display = 'block';
+                welcomeMessage.textContent = `Welcome, ${username}!`;
+                loginBtnTop.textContent = username;
+            }
+            
+            function hideUserPanel() {
+                loginForm.style.display = 'block';
+                userPanel.style.display = 'none';
+                localStorage.removeItem('loggedInUser');
+                loginBtnTop.textContent = 'Login';
+            }
+            
+            // Toggle login modal
+            loginBtnTop.addEventListener('click', function() {
+                loginModal.classList.add('active');
+            });
+            
+            closeLogin.addEventListener('click', function() {
+                loginModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside
+            loginModal.addEventListener('click', function(e) {
+                if (e.target === loginModal) {
+                    loginModal.classList.remove('active');
+                }
+            });
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                // Simple authentication (in real app, this would be server-side)
+                if (username && password) {
+                    // For demo purposes, any non-empty credentials will work
+                    localStorage.setItem('loggedInUser', username);
+                    showUserPanel(username);
+                    
+                    // Clear form and close modal
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    loginModal.classList.remove('active');
+                }
+            });
+            
+            logoutBtn.addEventListener('click', function() {
+                hideUserPanel();
+                loginModal.classList.remove('active');
+            });
+            
+            // Check login status on page load
+            checkLoginStatus();
+            
+            // Server info animation controls
+            const serverInfo = document.querySelector('.server-info');
+            let animationTimeout;
+            
+            serverInfo.addEventListener('mouseenter', function() {
+                clearTimeout(animationTimeout);
+                
+                // Randomly choose an animation
+                const animations = ['shake', 'wobble', 'bounce'];
+                const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+                
+                // Remove previous animation classes
+                serverInfo.classList.remove('shake', 'wobble', 'bounce');
+                
+                // Add new animation class
+                setTimeout(() => {
+                    serverInfo.classList.add(randomAnimation);
+                }, 10);
+            });
+            
+            serverInfo.addEventListener('mouseleave', function() {
+                // Remove animation classes after animation completes
+                animationTimeout = setTimeout(() => {
+                    serverInfo.classList.remove('shake', 'wobble', 'bounce');
+                }, 800);
+            });
+        });
+    </script>
+</body>
+</html>
